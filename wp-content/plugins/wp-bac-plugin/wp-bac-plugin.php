@@ -21,7 +21,7 @@
  * License:           GPL v2 or later
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Update URI:        https://github.com/bathurstaeroclub/wp-bac-plugin
- * Requires Plugins:  cf7
+ * Requires Plugins:  contact-form-7
  */
 
 use PHPMailer\PHPMailer\PHPMailer;
