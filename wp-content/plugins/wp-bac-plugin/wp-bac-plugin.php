@@ -40,7 +40,7 @@ function bac_phpmailer_smtp( $mail ) {
 		$mail->SMTPAuth   = true;
 
 		$mail->Username   = 'noreply@bathurstaeroclub.com.au';
-		$mail->Password   = 'secret';
+		$mail->Password   = 'secret'; // get_option('bac_misc_plugin_options')['password'];
 
 		// Choose 'ssl' for SMTPS on port 465, or 'tls' for SMTP+STARTTLS on port 25 or 587
 		$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
@@ -69,3 +69,42 @@ function bac_dashboard_widgets() {
 }
 
 add_action('wp_dashboard_setup', 'bac_dashboard_widgets');
+
+// ---------
+
+function bac_plugin_smtp_text() {
+	echo '<p>Here you can set all the options for using SMTP in the BAC plugin</p>';
+}
+
+function bac_plugin_smtp_password() {
+	$options = get_option( 'bac_misc_plugin_options' );
+	echo "<input id='bac_plugin_smtp_password' name='bac_misc_plugin_options[password]' type='text' value='" . esc_attr( $options['password'] ) . "' />";
+}
+
+function bac_misc_plugin_options_validate( $input ) {
+	// any validation of form input here..
+	return $newinput;
+}
+function bac_register_settings() {
+	register_setting( 'bac_misc_plugin_options', 'bac_misc_plugin_options', 'bac_misc_plugin_options_validate' );
+	add_settings_section( 'smtp_settings', 'SMTP Settings', 'bac_plugin_smtp_text', 'bac_misc_plugin' );
+	add_settings_field( 'bac_plugin_smtp_password', 'SMTP Password', 'bac_plugin_smtp_password', 'bac_misc_plugin', 'bac_settings' );
+}
+add_action( 'admin_init', 'bac_register_settings' );
+
+function bac_render_plugin_settings_page() {
+    ?>
+    <h2>BAC Plugin Settings</h2>
+    <form action="options.php" method="post">
+        <?php
+        settings_fields( 'bac_misc_plugin_options' );
+        do_settings_sections( 'bac_misc_plugin' ); ?>
+        <input name="submit" class="button button-primary" type="submit" value="<?php esc_attr_e( 'Save' ); ?>" />
+    </form>
+    <?php
+}
+
+function bac_add_settings_page() {
+    add_options_page( 'BAC plugin page', 'BAC Plugin Menu', 'manage_options', 'bac-misc-plugin', 'bac_render_plugin_settings_page' );
+}
+add_action( 'admin_menu', 'bac_add_settings_page' );
