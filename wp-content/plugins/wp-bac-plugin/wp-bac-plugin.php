@@ -36,7 +36,7 @@ function bac_phpmailer_smtp( $mail ) {
 		//Server settings
 		// $mail->SMTPDebug = SMTP::DEBUG_SERVER;
 		$mail->isSMTP();     
-		$mail->Host       = 'smtp.bathurstaeroclub.com.au';
+		$mail->Host       = 'mail.bathurstaeroclub.com.au';
 		$mail->SMTPAuth   = true;
 
 		$mail->Username   = 'noreply@bathurstaeroclub.com.au';
