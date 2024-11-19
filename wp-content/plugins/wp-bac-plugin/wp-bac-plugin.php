@@ -97,7 +97,7 @@ function bac_misc_settings_init() {
 		'bac_misc'
 	);
 	add_settings_field(
-		'bac_misc_smtp_password',
+		'bac_misc_set_smtp_password',
 		'SMTP Password', 'bac_misc_set_smtp_password_cb',
 		'bac_misc',
 		'bac_misc_smtp_settings'
