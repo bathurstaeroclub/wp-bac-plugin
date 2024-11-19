@@ -40,7 +40,7 @@ function bac_phpmailer_smtp( $mail ) {
 		$mail->SMTPAuth   = true;
 
 		$mail->Username   = 'noreply@bathurstaeroclub.com.au';
-		$mail->Password   = 'secret'; // get_option('bac_misc_plugin_options')['password'];
+		$mail->Password   = get_option('bac_misc_options')['password'];
 
 		// Choose 'ssl' for SMTPS on port 465, or 'tls' for SMTP+STARTTLS on port 25 or 587
 		$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
@@ -72,39 +72,68 @@ add_action('wp_dashboard_setup', 'bac_dashboard_widgets');
 
 // ---------
 
-function bac_plugin_smtp_text() {
+function bac_misc_smtp_text_cb() {
 	echo '<p>Here you can set all the options for using SMTP in the BAC plugin</p>';
 }
 
-function bac_plugin_smtp_password() {
-	$options = get_option( 'bac_misc_plugin_options' );
-	echo "<input id='bac_plugin_smtp_password' name='bac_misc_plugin_options[password]' type='text' value='" . esc_attr( $options['password'] ) . "' />";
+function bac_misc_set_smtp_password_cb() {
+	$options = get_option( 'bac_misc_options' );
+	echo "<input id='bac_misc_set_smtp_password' name='bac_misc_options[password]' type='text' value='" . esc_attr( $options['password'] ) . "' />";
 }
 
-function bac_misc_plugin_options_validate( $input ) {
+function bac_misc_options_validate( $input ) {
 	// any validation of form input here..
 	return $newinput;
 }
-function bac_register_settings() {
-	register_setting( 'bac_misc_plugin_options', 'bac_misc_plugin_options', 'bac_misc_plugin_options_validate' );
-	add_settings_section( 'smtp_settings', 'SMTP Settings', 'bac_plugin_smtp_text', 'bac_misc_plugin' );
-	add_settings_field( 'bac_plugin_smtp_password', 'SMTP Password', 'bac_plugin_smtp_password', 'bac_misc_plugin', 'bac_settings' );
-}
-add_action( 'admin_init', 'bac_register_settings' );
+function bac_misc_settings_init() {
+	register_setting( 'bac_misc', 'bac_misc_options', 'bac_misc_options_validate' );
 
-function bac_render_plugin_settings_page() {
-    ?>
-    <h2>BAC Plugin Settings</h2>
-    <form action="options.php" method="post">
-        <?php
-        settings_fields( 'bac_misc_plugin_options' );
-        do_settings_sections( 'bac_misc_plugin' ); ?>
-        <input name="submit" class="button button-primary" type="submit" value="<?php esc_attr_e( 'Save' ); ?>" />
-    </form>
-    <?php
+	// Register a new section in the "bac_misc" page.
+	add_settings_section(
+		'bac_misc_smtp_settings',
+		'SMTP Settings', 'bac_misc_smtp_text_cb',
+		'bac_misc'
+	);
+	add_settings_field(
+		'bac_misc_smtp_password',
+		'SMTP Password', 'bac_misc_set_smtp_password_cb',
+		'bac_misc',
+		'bac_misc_smtp_settings'
+	);
+}
+add_action( 'admin_init', 'bac_misc_settings_init' );
+
+function bac_misc_render_options_page_html() {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+
+	if ( isset( $_GET['settings-updated'] ) ) {
+		add_settings_error( 'bac_misc_messages', 'bac_misc_message', __( 'Settings Saved', 'bac_misc' ), 'updated' );
+	}
+	settings_errors( 'bac_misc_messages' );
+
+	?>
+	<div class="wrap">
+		<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+		<form action="options.php" method="post">
+			<?php
+			settings_fields( 'bac_misc' );
+			do_settings_sections( 'bac_misc' );
+			submit_button( 'Save Settings' );
+			?>
+		</form>
+	</div>
+	<?php
 }
 
-function bac_add_settings_page() {
-    add_options_page( 'BAC plugin page', 'BAC Plugin Menu', 'manage_options', 'bac-misc-plugin', 'bac_render_plugin_settings_page' );
+function bac_misc_options_page() {
+	add_options_page(
+		'BAC plugin page',
+		'BAC Plugin Options',
+		'manage_options',
+		'bac_misc',
+		'bac_misc_render_options_page_html'
+	);
 }
-add_action( 'admin_menu', 'bac_add_settings_page' );
+add_action( 'admin_menu', 'bac_misc_options_page' );
