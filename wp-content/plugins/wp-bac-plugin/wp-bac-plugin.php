@@ -78,7 +78,9 @@ function bac_misc_smtp_text_cb() {
 
 function bac_misc_set_smtp_password_cb() {
 	$options = get_option( 'bac_misc_options' );
-	echo "<input id='bac_misc_set_smtp_password' name='bac_misc_options[password]' type='text' value='" . esc_attr( $options['password'] ) . "' />";
+	?>
+		<input id='bac_misc_set_smtp_password' name='bac_misc_options[password]' type='text' value="<?php echo esc_attr( $options['password'] ); ?>" />
+	<?php
 }
 
 function bac_misc_options_validate( $input ) {
