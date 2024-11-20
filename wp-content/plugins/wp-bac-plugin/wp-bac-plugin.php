@@ -62,6 +62,7 @@ add_action( 'phpmailer_init', 'bac_phpmailer_smtp' );
 
 function bac_dashboard_help() {
 	echo '<p>BAC Misc Management Plugin.</p>';
+	echo '<p>Howdy Club Admin, please report feature requests and bugs on the plugin github page. See plugin website under the Plugin Menu. Cheers, Edward.</p>';
 }
 function bac_dashboard_widgets() {
 	global $wp_meta_boxes;
