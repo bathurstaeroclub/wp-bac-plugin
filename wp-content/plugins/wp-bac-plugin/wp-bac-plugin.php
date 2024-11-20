@@ -72,11 +72,18 @@ add_action('wp_dashboard_setup', 'bac_dashboard_widgets');
 
 // ---------
 
-function bac_misc_smtp_text_cb() {
-	echo '<p>Here you can set all the options for using SMTP in the BAC plugin</p>';
+function bac_misc_smtp_text_cb( $args ) {
+	?>
+	<p id="<?php echo esc_attr( $args['id'] ); ?>"><?php esc_html_e( 'Here you can set all the options for using SMTP in the BAC plugin.', 'bac_misc' ); ?></p>
+	<?php
 }
 
-function bac_misc_set_smtp_password_cb() {
+/**
+ * SMTP Set Password section callback function.
+ *
+ * @param array $args
+ */
+function bac_misc_set_smtp_password_cb( $args ) {
 	$options = get_option( 'bac_misc_options' );
 	?>
 		<input id='bac_misc_set_smtp_password' name='bac_misc_options[password]' type='text' value="<?php echo esc_attr( $options['password'] ); ?>" />
